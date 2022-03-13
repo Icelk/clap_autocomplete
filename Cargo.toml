@@ -1,0 +1,20 @@
+[package]
+name = "clap_autocomplete"
+description = "Easy to integrate shell completion for Clap. Finds the user's shell and puts completion files in the appropriate locations."
+version = "0.1.0"
+author = ["Icelk <main@icelk.dev>"]
+edition = "2021"
+readme = "README.md"
+homepage = "https://github.com/Icelk/clap_autocomplete"
+repository = "https://github.com/Icelk/clap_autocomplete"
+license = "MIT OR Apache-2.0"
+keywords = ["cli", "bash", "clap", "completion", "fish"]
+categories = ["command-line-interface"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = ">= 3.1, < 4"
+clap_complete = ">= 3.1, < 4"
+get-shell = "0.1"
+xdg = "2.4"
