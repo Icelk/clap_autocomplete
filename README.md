@@ -14,6 +14,10 @@ It however only supports placing the completion files for Fish, Bash, and Zsh. I
 Documentation for releases can be found on [docs.rs](https://docs.rs/clap_autocomplete).
 Main branch documentation is found on [doc.icelk.dev](https://doc.icelk.dev/clap_autocomplete/clap_autocomplete/).
 
+# Versions
+
+0.1.x: Clap >= 3.1, < 4
+
 # License
 
 Dual-licensed under [Apache 2.0](LICENSE-APACHE) or [MIT](LICENSE-MIT).
