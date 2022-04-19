@@ -16,18 +16,18 @@ Main branch documentation is found on [doc.icelk.dev](https://doc.icelk.dev/clap
 
 # Versions
 
-0.1.x: Clap >= 3.1, < 4
-0.2.x: Clap >= 3.1, < 4
+-   0.1.x: Clap >= 3.1, < 4
+-   0.2.x: Clap >= 3.1, < 4
 
 # Changelog
 
 ## 0.2.0
 
-- Much faster fetching of shell.
-- 20 less dependencies (removed `rayon`, which was included as part of `sysinfo` in the old shell fetch crate).
-- Better output of OS errors.
-- Status messages print to `stderr`.
-- Removed dependency on `clap`'s default features (e.g. `regex`).
+-   Much faster fetching of shell.
+-   20 less dependencies (removed `rayon`, which was included as part of `sysinfo` in the old shell fetch crate).
+-   Better output of OS errors.
+-   Status messages print to `stderr`.
+-   Removed dependency on `clap`'s default features (e.g. `regex`).
 
 # License
 
