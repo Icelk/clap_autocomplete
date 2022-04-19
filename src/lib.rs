@@ -78,9 +78,11 @@ pub fn test_subcommand(matches: &ArgMatches, mut command: Command) -> Option<Res
                 .ok_or(())
                 .or_else(|()| {
                     println!("Getting your shell.");
-                    get_shell::get_shell_name().map_err(|_| {
-                        "failed to detect shell, please explicitly supply it".to_owned()
-                    })
+                    query_shell::get_shell()
+                        .map_err(|_| {
+                            "failed to detect shell, please explicitly supply it".to_owned()
+                        })
+                        .map(|shell| shell.to_str().to_owned())
                 })?;
             name.make_ascii_lowercase();
             match name.as_str() {
