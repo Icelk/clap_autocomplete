@@ -107,8 +107,12 @@ pub fn test_subcommand(matches: &ArgMatches, mut command: Command) -> Option<Res
         } else {
             let mut buffer = Vec::with_capacity(512);
             clap_complete::generate(shell, &mut command, &bin_name, &mut buffer);
-            write_shell(shell, &buffer, &bin_name)
-                .map_err(|err| format!("insufficient privileges: {}", err))?;
+            write_shell(shell, &buffer, &bin_name).map_err(|err| match err.kind() {
+                io::ErrorKind::PermissionDenied => {
+                    "Failed to write shell. Permission denied.".to_owned()
+                }
+                _ => format!("Failed to write shell: {}", err),
+            })?;
             Ok(())
         }
     })
