@@ -64,6 +64,8 @@ pub fn add_subcommand(command: Command) -> Command {
 }
 /// Check the [`ArgMatches`] for the subcommand added by [`add_subcommand`].
 ///
+/// All printing is done to `stderr` to avoid clogging up potential output.
+///
 /// # Returns
 ///
 /// Ignore if this returns [`None`].
@@ -77,7 +79,7 @@ pub fn test_subcommand(matches: &ArgMatches, mut command: Command) -> Option<Res
                 .map(Into::into)
                 .ok_or(())
                 .or_else(|()| {
-                    println!("Getting your shell.");
+                    eprintln!("Getting your shell.");
                     query_shell::get_shell()
                         .map_err(|_| {
                             "failed to detect shell, please explicitly supply it".to_owned()
@@ -125,7 +127,7 @@ fn write_shell(shell: Shell, data: &[u8], bin_name: &str) -> Result<(), io::Erro
     if let Some(parent) = path.parent() {
         create_dir_all(parent)?;
     }
-    println!("Writing completions to {}", path.display());
+    eprintln!("Writing completions to {}", path.display());
     fs::write(path, data)?;
     Ok(())
 }
