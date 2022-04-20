@@ -21,6 +21,11 @@ Main branch documentation is found on [doc.icelk.dev](https://doc.icelk.dev/clap
 
 # Changelog
 
+## 0.2.1
+
+-   Faster fetching of shell
+-   4 nested dependencies removed
+
 ## 0.2.0
 
 -   Much faster fetching of shell.
