@@ -18,8 +18,13 @@ Main branch documentation is found on [doc.icelk.dev](https://doc.icelk.dev/clap
 
 -   0.1.x: Clap >= 3.1, < 4
 -   0.2.x: Clap >= 3.1, < 4
+-   0.3.x: Clap 4
 
 # Changelog
+
+## 0.3.0
+
+-   Update to Clap 4
 
 ## 0.2.1
 

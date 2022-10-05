@@ -33,8 +33,7 @@ use std::fs;
 use std::fs::create_dir_all;
 use std::io;
 
-use clap::ValueHint;
-use clap::{Arg, ArgMatches, Command};
+use clap::{Arg, ArgMatches, Command, ValueHint};
 use clap_complete::Shell;
 
 /// Add the `complete` subcommand to your [`Command`].
@@ -43,22 +42,24 @@ pub fn add_subcommand(command: Command) -> Command {
     command.subcommand(
         Command::new("complete")
             .about(
-                "Generate completions for the detected/selected shell and put the completions in appropriate directories.\n\
-                Currently supports Fish, Bash, Zsh, Elvish, and PowerShell. Fish, Bash, and Zsh are installed automatically (when not using the --print flag)."
+                "Generate completions for the detected/selected shell and \
+                put the completions in appropriate directories.\n\
+                Currently supports Fish, Bash, Zsh, Elvish, and PowerShell. \
+                Fish, Bash, and Zsh are installed \
+                automatically (when not using the --print flag).",
             )
-            .arg(
-                Arg::new("print").short('p').long("print").help(
-                    "Print the shell completion to stdout instead of writing to default file.\n\
-                    Does nothing when using shells for which the installation location isn't implemented.",
-                ),
-            )
+            .arg(Arg::new("print").short('p').long("print").help(
+                "Print the shell completion to stdout instead of writing to default file.\n\
+                Does nothing when using shells for which \
+                the installation location isn't implemented.",
+            ))
             .arg(
                 Arg::new("shell")
-                    .takes_value(true)
+                    .num_args(1)
                     .short('s')
                     .long("shell")
                     .help("Explicitly choose which shell to output.")
-                    .value_hint(ValueHint::Other)
+                    .value_hint(ValueHint::Other),
             ),
     )
 }
@@ -75,7 +76,7 @@ pub fn test_subcommand(matches: &ArgMatches, mut command: Command) -> Option<Res
     matches.subcommand_matches("complete").map(|matches| {
         let shell = {
             let mut name = matches
-                .value_of("shell")
+                .get_one::<String>("shell")
                 .map(Into::into)
                 .ok_or(())
                 .or_else(|()| {
@@ -101,8 +102,9 @@ pub fn test_subcommand(matches: &ArgMatches, mut command: Command) -> Option<Res
             .unwrap_or_else(|| command.get_name())
             .to_owned();
 
-        if matches.is_present("print") || !matches!(shell, Shell::Fish | Shell::Bash | Shell::Zsh) {
-            clap_complete::generate(shell, &mut command, bin_name, &mut io::stdout());
+        if matches.contains_id("print") || !matches!(shell, Shell::Fish | Shell::Bash | Shell::Zsh)
+        {
+            clap_complete::generate(shell, &mut command, &bin_name, &mut io::stdout());
             Ok(())
         } else {
             let mut buffer = Vec::with_capacity(512);
