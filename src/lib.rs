@@ -39,29 +39,40 @@ use clap_complete::Shell;
 /// Add the `complete` subcommand to your [`Command`].
 #[must_use]
 pub fn add_subcommand(command: Command) -> Command {
-    command.subcommand(
-        Command::new("complete")
-            .about(
-                "Generate completions for the detected/selected shell and \
-                put the completions in appropriate directories.\n\
-                Currently supports Fish, Bash, Zsh, Elvish, and PowerShell. \
-                Fish, Bash, and Zsh are installed \
-                automatically (when not using the --print flag).",
-            )
-            .arg(Arg::new("print").short('p').long("print").help(
-                "Print the shell completion to stdout instead of writing to default file.\n\
-                Does nothing when using shells for which \
-                the installation location isn't implemented.",
-            ))
-            .arg(
-                Arg::new("shell")
-                    .num_args(1)
-                    .short('s')
-                    .long("shell")
-                    .help("Explicitly choose which shell to output.")
-                    .value_hint(ValueHint::Other),
-            ),
-    )
+    #[allow(clippy::let_and_return)] // cfg
+    let c = command.subcommand(
+        Command::new("complete").arg(
+            Arg::new("shell")
+                .num_args(1)
+                .short('s')
+                .long("shell")
+                .help("Explicitly choose which shell to output.")
+                .value_hint(ValueHint::Other),
+        ),
+    );
+
+    #[cfg(any(unix, target_os = "redox"))]
+    {
+        c.arg(Arg::new("print").short('p').long("print").help(
+            "Print the shell completion to stdout instead of writing to default file.\n\
+            Does nothing when using shells for which \
+            the installation location isn't implemented.",
+        ))
+        .about(
+            "Generate completions for the detected/selected shell and \
+            put the completions in appropriate directories.\n\
+            Currently supports Fish, Bash, Zsh, Elvish, and PowerShell. \
+            Fish, Bash, and Zsh are installed \
+            automatically (when not using the --print flag).",
+        )
+    }
+    #[cfg(not(any(unix, target_os = "redox")))]
+    {
+        c.about(
+            "Generate completions for the detected/selected shell. \
+            Currently supports Fish, Bash, Zsh, Elvish, and PowerShell.",
+        )
+    }
 }
 /// Check the [`ArgMatches`] for the subcommand added by [`add_subcommand`].
 ///
@@ -102,23 +113,32 @@ pub fn test_subcommand(matches: &ArgMatches, mut command: Command) -> Option<Res
             .unwrap_or_else(|| command.get_name())
             .to_owned();
 
-        if matches.contains_id("print") || !matches!(shell, Shell::Fish | Shell::Bash | Shell::Zsh)
+        #[cfg(any(unix, target_os = "redox"))]
+        {
+            if matches.get_flag("print") || !matches!(shell, Shell::Fish | Shell::Bash | Shell::Zsh)
+            {
+                clap_complete::generate(shell, &mut command, &bin_name, &mut io::stdout());
+                Ok(())
+            } else {
+                let mut buffer = Vec::with_capacity(512);
+                clap_complete::generate(shell, &mut command, &bin_name, &mut buffer);
+                write_shell(shell, &buffer, &bin_name).map_err(|err| match err.kind() {
+                    io::ErrorKind::PermissionDenied => {
+                        "Failed to write shell. Permission denied.".to_owned()
+                    }
+                    _ => format!("Failed to write shell: {}", err),
+                })?;
+                Ok(())
+            }
+        }
+        #[cfg(not(any(unix, target_os = "redox")))]
         {
             clap_complete::generate(shell, &mut command, &bin_name, &mut io::stdout());
-            Ok(())
-        } else {
-            let mut buffer = Vec::with_capacity(512);
-            clap_complete::generate(shell, &mut command, &bin_name, &mut buffer);
-            write_shell(shell, &buffer, &bin_name).map_err(|err| match err.kind() {
-                io::ErrorKind::PermissionDenied => {
-                    "Failed to write shell. Permission denied.".to_owned()
-                }
-                _ => format!("Failed to write shell: {}", err),
-            })?;
             Ok(())
         }
     })
 }
+#[cfg(any(unix, target_os = "redox"))]
 fn write_shell(shell: Shell, data: &[u8], bin_name: &str) -> Result<(), io::Error> {
     let path = match shell {
         Shell::Fish => {
