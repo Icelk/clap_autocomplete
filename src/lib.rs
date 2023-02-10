@@ -91,7 +91,7 @@ pub fn test_subcommand(matches: &ArgMatches, mut command: Command) -> Option<Res
                 .map(Into::into)
                 .ok_or(())
                 .or_else(|()| {
-                    eprintln!("Getting your shell.");
+                    eprintln!("Trying to get your shell.");
                     query_shell::get_shell()
                         .map_err(|_| {
                             "failed to detect shell, please explicitly supply it".to_owned()

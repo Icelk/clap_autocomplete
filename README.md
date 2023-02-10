@@ -23,6 +23,10 @@ Main branch documentation is found on [doc.icelk.dev](https://doc.icelk.dev/clap
 
 # Changelog
 
+## 0.4.1
+
+-   Update `query-shell` dependency.
+
 ## 0.4.0
 
 -   Fix compilation on Windows by disabling automatic writing to shell completions.
