@@ -33,45 +33,46 @@ use std::fs;
 use std::fs::create_dir_all;
 use std::io;
 
-use clap::{Arg, ArgMatches, Command, ValueHint};
+use clap::{Arg, ArgAction, ArgMatches, Command, ValueHint};
 use clap_complete::Shell;
 
 /// Add the `complete` subcommand to your [`Command`].
 #[must_use]
 pub fn add_subcommand(command: Command) -> Command {
     #[allow(clippy::let_and_return)] // cfg
-    let c = command.subcommand(
-        Command::new("complete").arg(
-            Arg::new("shell")
-                .num_args(1)
-                .short('s')
-                .long("shell")
-                .help("Explicitly choose which shell to output.")
-                .value_hint(ValueHint::Other),
-        ),
+    let sub_c = Command::new("complete").arg(
+        Arg::new("shell")
+            .num_args(1)
+            .short('s')
+            .long("shell")
+            .help("Explicitly choose which shell to output.")
+            .value_hint(ValueHint::Other),
     );
 
     #[cfg(any(unix, target_os = "redox"))]
     {
-        c.arg(Arg::new("print").short('p').long("print").help(
-            "Print the shell completion to stdout instead of writing to default file.\n\
+        command.subcommand(
+            sub_c
+                .arg(Arg::new("print").short('p').long("print").action(clap::ArgAction::SetTrue).help(
+                    "Print the shell completion to stdout instead of writing to default file.\n\
             Does nothing when using shells for which \
             the installation location isn't implemented.",
-        ))
-        .about(
-            "Generate completions for the detected/selected shell and \
+                ))
+                .about(
+                    "Generate completions for the detected/selected shell and \
             put the completions in appropriate directories.\n\
             Currently supports Fish, Bash, Zsh, Elvish, and PowerShell. \
             Fish, Bash, and Zsh are installed \
             automatically (when not using the --print flag).",
+                )
         )
     }
     #[cfg(not(any(unix, target_os = "redox")))]
     {
-        c.about(
+        command.subcommand(sub_c.about(
             "Generate completions for the detected/selected shell. \
             Currently supports Fish, Bash, Zsh, Elvish, and PowerShell.",
-        )
+        ))
     }
 }
 /// Check the [`ArgMatches`] for the subcommand added by [`add_subcommand`].
