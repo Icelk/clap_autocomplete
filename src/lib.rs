@@ -53,7 +53,7 @@ pub fn add_subcommand(command: Command) -> Command {
     {
         command.subcommand(
             sub_c
-                .arg(Arg::new("print").short('p').long("print").action(clap::ArgAction::SetTrue).help(
+                .arg(Arg::new("print").short('p').long("print").action(ArgAction::SetTrue).help(
                     "Print the shell completion to stdout instead of writing to default file.\n\
             Does nothing when using shells for which \
             the installation location isn't implemented.",

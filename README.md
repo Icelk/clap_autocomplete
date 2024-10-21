@@ -23,6 +23,10 @@ Main branch documentation is found on [doc.icelk.dev](https://doc.icelk.dev/clap
 
 # Changelog
 
+## 0.4.2
+
+- [fix: add print flag to subcommand and set default behavior](https://github.com/Icelk/clap_autocomplete/pull/3)
+
 ## 0.4.1
 
 -   Update `query-shell` dependency.

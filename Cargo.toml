@@ -2,7 +2,7 @@
 name = "clap_autocomplete"
 description = "Easy to integrate shell completion for Clap. Finds the user's shell and puts completion files in the appropriate locations."
 # Remember to add to the changelog and versions information in README.
-version = "0.4.1"
+version = "0.4.2"
 authors = ["Icelk <main@icelk.dev>"]
 edition = "2021"
 readme = "README.md"
