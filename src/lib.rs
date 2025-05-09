@@ -143,7 +143,7 @@ pub fn test_subcommand(matches: &ArgMatches, mut command: Command) -> Option<Res
 fn write_shell(shell: Shell, data: &[u8], bin_name: &str) -> Result<(), io::Error> {
     let path = match shell {
         Shell::Fish => {
-            let dirs = xdg::BaseDirectories::new()?;
+            let dirs = xdg::BaseDirectories::new();
             dirs.place_config_file(format!("fish/completions/{bin_name}.fish"))?
         }
         Shell::Bash => format!("/usr/share/bash-completion/completions/{bin_name}").into(),
